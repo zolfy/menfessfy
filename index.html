@@ -6,16 +6,16 @@
   <style>
     body {
       font-family: sans-serif;
-      background-color: #f5f5f5;
-      max-width: 600px;
-      margin: 40px auto;
+      background-color: #f4f4f4;
       padding: 20px;
+      max-width: 600px;
+      margin: auto;
     }
     .form-container {
-      background: #fff;
+      background: white;
       padding: 20px;
       border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
       margin-bottom: 30px;
     }
     textarea, input {
@@ -29,16 +29,16 @@
     button {
       background: #1db954;
       color: white;
-      padding: 10px 20px;
       border: none;
+      padding: 10px 20px;
       border-radius: 8px;
       cursor: pointer;
     }
     .fess {
-      background: white;
+      background: #fff;
       padding: 15px;
-      border-radius: 12px;
       margin-bottom: 20px;
+      border-radius: 10px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.05);
     }
   </style>
@@ -54,12 +54,12 @@
 
   <div id="fessContainer"></div>
 
-  <!-- Firebase SDK -->
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
 
   <script>
-    // Konfigurasi Firebase
+    // Konfigurasi Firebase (PUNYA LU)
     const firebaseConfig = {
       apiKey: "AIzaSyCIVpUjYJFBbQvolQelWkxEvUiRKBj9csU",
       authDomain: "menfessfy.firebaseapp.com",
@@ -72,16 +72,16 @@
     };
 
     // Inisialisasi Firebase
-    firebase.initializeApp(firebaseConfig);
+    const app = firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // Fungsi Kirim Fess
+    // Fungsi submit
     function submitFess() {
       const message = document.getElementById("message").value.trim();
       const spotifyLink = document.getElementById("spotifyLink").value.trim();
 
       if (!message || !spotifyLink.includes("/track/")) {
-        alert("Isi curhat dan link lagu Spotify yang valid ya!");
+        alert("Isi curhat dan link lagu Spotify yang bener ya!");
         return;
       }
 
@@ -96,12 +96,12 @@
 
       db.ref("fess").push(fess);
 
-      // Reset input
+      // Reset form
       document.getElementById("message").value = "";
       document.getElementById("spotifyLink").value = "";
     }
 
-    // Tampilkan semua fess
+    // Nampilin fess
     db.ref("fess").on("child_added", function(snapshot) {
       const data = snapshot.val();
       const fessHTML = `
