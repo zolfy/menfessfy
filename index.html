@@ -1,19 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Menfess Spotify</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Menfess Spotify 🎧</title>
   <style>
     body {
       font-family: sans-serif;
-      max-width: 500px;
-      margin: 50px auto;
-      padding: 20px;
       background-color: #f5f5f5;
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
     }
     .form-container {
-      background: white;
+      background: #fff;
       padding: 20px;
       border-radius: 12px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
@@ -28,9 +27,9 @@
       border: 1px solid #ccc;
     }
     button {
-      padding: 10px 15px;
       background: #1db954;
       color: white;
+      padding: 10px 20px;
       border: none;
       border-radius: 8px;
       cursor: pointer;
@@ -50,72 +49,68 @@
     <h1>Menfess Spotify 🎧</h1>
     <textarea id="message" placeholder="Tulis curhatan lu di sini..."></textarea>
     <input type="text" id="spotifyLink" placeholder="Tempel link lagu dari Spotify...">
-    <button id="submitBtn" onclick="submitFess()">Kirim</button>
+    <button onclick="submitFess()">Kirim</button>
   </div>
 
   <div id="fessContainer"></div>
 
-  <!-- Firebase SDK (versi CDN) -->
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
 
   <script>
+    // Konfigurasi Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyCIVpUjYJFBbQvolQelWkxEvUiRKBj9csU",
       authDomain: "menfessfy.firebaseapp.com",
       databaseURL: "https://menfessfy-default-rtdb.asia-southeast1.firebasedatabase.app",
       projectId: "menfessfy",
-      storageBucket: "menfessfy.firebasestorage.app",
+      storageBucket: "menfessfy.appspot.com",
       messagingSenderId: "826343664402",
       appId: "1:826343664402:web:0ee5b1ca0dc4a4a90f21cb",
       measurementId: "G-19LW1ZH11M"
     };
 
+    // Inisialisasi Firebase
     firebase.initializeApp(firebaseConfig);
-  </script>
+    const db = firebase.database();
 
-  <!-- Script utama -->
-  <script>
-    const fessContainer = document.getElementById('fessContainer');
-    const messageInput = document.getElementById('message');
-    const spotifyLinkInput = document.getElementById('spotifyLink');
-
+    // Fungsi Kirim Fess
     function submitFess() {
-      const msg = messageInput.value.trim();
-      const spotifyLink = spotifyLinkInput.value.trim();
+      const message = document.getElementById("message").value.trim();
+      const spotifyLink = document.getElementById("spotifyLink").value.trim();
 
-      if (!msg || !spotifyLink.includes("/track/")) {
-        alert("Tolong isi curhat dan link lagu yang bener!");
+      if (!message || !spotifyLink.includes("/track/")) {
+        alert("Isi curhat dan link lagu Spotify yang valid ya!");
         return;
       }
 
-      const trackId = spotifyLink.split("/track/")[1]?.split("?")[0];
+      const trackId = spotifyLink.split("/track/")[1].split("?")[0];
       const embedLink = `https://open.spotify.com/embed/track/${trackId}`;
 
       const fess = {
-        text: msg,
+        text: message,
         spotify: embedLink,
         timestamp: Date.now()
       };
 
-      firebase.database().ref("fess").push(fess);
+      db.ref("fess").push(fess);
 
-      messageInput.value = '';
-      spotifyLinkInput.value = '';
+      // Reset input
+      document.getElementById("message").value = "";
+      document.getElementById("spotifyLink").value = "";
     }
 
-    // Tampilkan semua fess dari Firebase
-    firebase.database().ref("fess").on("child_added", function(snapshot) {
+    // Tampilkan semua fess
+    db.ref("fess").on("child_added", function(snapshot) {
       const data = snapshot.val();
-
       const fessHTML = `
         <div class="fess">
           <p>${data.text}</p>
           <iframe style="border-radius:12px" src="${data.spotify}" width="100%" height="80" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
         </div>
       `;
-
-      fessContainer.innerHTML = fessHTML + fessContainer.innerHTML;
+      document.getElementById("fessContainer").innerHTML = fessHTML + document.getElementById("fessContainer").innerHTML;
     });
   </script>
 </body>
